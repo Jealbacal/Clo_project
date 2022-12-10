@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import pyspark
 import re
+import os
 from email.header import Header
 from pyspark import SparkContext,SparkConf
 from pyspark.sql import SparkSession
@@ -25,16 +26,9 @@ dfclean=dfJoin.drop("MAL_ID","Japanese Name","Premiered","Producers","Licensors"
                     "On-Hold","Dropped","Plan to watch",
                     "Score-10","Score-9","Score-8","Score-7","Score-6","Score-5","Score-4","Score-3","Score-2","Score-1")
 #dfclean.show()
-
 df_names=df2.select("username")
 df_names.show()
 #Row(username='RedvelvetDaisuki')
-
-index=1
-name=(df_names.collect()[index])
-print(name)
-user=name.__getitem__('username')
-print(user)
 
 #Genres:  ['Action']
 #Sources:  ['Manga']
@@ -42,9 +36,6 @@ print(user)
 #Estudio:  mappa
 #Popular:  si
 
-genre_count=0
-studio_count=0
-source_count=0
 
 genero1="Action"
 genero2="Adventure"
@@ -53,29 +44,87 @@ genero4=""
 #puedo hacer un array pero ya otro dia
 source="Manga"
 studio="Bones"
+rating=""
 
-df_user_aux=dfclean.filter(dfclean.username==user)
-df_user_aux.show()
+once=1
 
-df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero1)==True)
-df_user_aux.show(truncate=False)
-df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero2)==True)
-genre_count=df_user_aux.count()
+filter_size=2
 
-df_user_aux.show(truncate=False)
+name_array=[""]*filter_size
+cont_array=[0]*filter_size
 
-df_user_aux=df_user_aux.filter(df_user_aux.Source==source)
-source_count=df_user_aux.count()
-df_user_aux.show(truncate=False)
+index=0
+rango=df_names.count()
+#-----------------------------------------------------
+#cojo la tabla con el usuario con nombre [index]
+for index in range(100):
+    name=(df_names.collect()[index])
+    print(name)
+    user=name.__getitem__('username')
+    print(user)
+    df_user_aux=dfclean.filter(dfclean.username==user)
 
-df_user_aux=df_user_aux.filter(df_user_aux.Studios==studio)
-studio_count=df_user_aux.count()
-df_user_aux.show(truncate=False)
+    genre_count=0
+    studio_count=0
+    source_count=0
+    rating_count=0
+    final_count=0
+
+    end=1
+    #generos
+    if genero1!="":
+        df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero1)==True)
+
+    if genero2!="":
+        df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero2)==True)
+
+    #if(genero3 y 4)
+    genre_count=df_user_aux.count()
+
+    #source
+    if source!="":
+        df_user_aux=df_user_aux.filter(df_user_aux.Source==source)
+        source_count=df_user_aux.count()
+
+    #studio
+    if studio!="":
+        df_user_aux=df_user_aux.filter(df_user_aux.Studios==studio)
+        studio_count=df_user_aux.count()
+
+    #ratings
+    if rating!="":
+        df_user_aux=df_user_aux.filter(df_user_aux.Rating==rating)
+        rating_count=df_user_aux.count()
+        
+    final_count=df_user_aux.count() 
+    
+    # name_array.append(user)
+    # cont_array.append(final_count)
+    # 8 7 6 5 4 
+    for i in range(len(name_array)):
+        if final_count>cont_array[i] and end==1:
+            
+           
+            j=(len(name_array)-1)
+            while j > 0:
+                cont_array[j]=cont_array[j-1]
+                name_array[j]=name_array[j-1]
+                j-=1
+            cont_array[i]=final_count
+            name_array[i]=user
+            end=0
 
 
-print("Genero:"+ genero1 +","+ genero2 + " Count: " + str(genre_count))
-print("Source:"+ source + " Count: " + str(source_count))
-print("Studio:"+ studio + " Count: " + str(studio_count))
+for x in range(len(name_array)):
+     print("Contador de "+name_array[x]+":  "+str(cont_array[x]))
+    
+# print("Genero:"+ genero1 +","+ genero2 + " Count: " + str(genre_count))
+# print("Source:"+ source + " Count: " + str(source_count))
+# print("Studio:"+ studio + " Count: " + str(studio_count))# contador final de cuantos animes filtrados con todos los parametros hay
+
+
+
+#--------------------------------------------------
 
 
 
