@@ -17,14 +17,12 @@ sc= SparkContext(conf=conf)
 spark=SparkSession.builder.appName('PySpark Read CSV').getOrCreate()
 
 df=spark.read.csv('clean.csv',sep=',',mode="DROPMALFORMED",header=True)
-df1=spark.read.csv('AnimeList.csv',sep=',',mode="DROPMALFORMED",header=True)
+df1=spark.read.csv('Animes.csv',sep=',',mode="DROPMALFORMED",header=True)
 df2=spark.read.csv('UserList.csv',sep=',',mode="DROPMALFORMED",header=True)
 
 dfJoin=df.join(df1,df.anime_id==df1.MAL_ID,"inner")
 
-dfclean=dfJoin.drop("MAL_ID","Japanese Name","Premiered","Producers","Licensors","Duration","Popularity","Members","Favorites","Watching","Completed"
-                    "On-Hold","Dropped","Plan to watch",
-                    "Score-10","Score-9","Score-8","Score-7","Score-6","Score-5","Score-4","Score-3","Score-2","Score-1")
+dfclean=dfJoin.drop("MAL_ID")
 #dfclean.show()
 df_names=df2.select("username")
 df_names.show()
@@ -50,8 +48,10 @@ df_names.show()
 userGen=[]
 try: 
     with open("userGeneros.txt") as fileGen:
-        for line in fileGen:
-            userGen.append(line)
+         for line in fileGen:
+             line=line.strip("\n")
+             userGen.append(line)
+     
 except:
     print("el usuario no tiene preferencia por el genero")
 
@@ -82,7 +82,7 @@ except:
 #---------------------------------------------------------------
 once=1
 
-filter_size=2
+filter_size=10
 
 name_array=[""]*filter_size
 cont_array=[0]*filter_size
@@ -91,7 +91,7 @@ index=0
 rango=df_names.count()
 #-----------------------------------------------------
 #cojo la tabla con el usuario con nombre [index]
-for index in range(100):
+for index in range(30):
     name=(df_names.collect()[index])
     print(name)
     user=name.__getitem__('username')
@@ -110,6 +110,7 @@ for index in range(100):
     if userGen:
         for genre in userGen:
              df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genre)==True)
+             #df_user_aux.show()
 
     # if genero1!="":
     #     df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero1)==True)
@@ -124,27 +125,34 @@ for index in range(100):
     if userSour:
         for source in userSour:
             df_user_aux=df_user_aux.filter(df_user_aux.Source==source)
-
+            #df_user_aux.show()
+             
     source_count=df_user_aux.count()
 
     #studio
     if userStudio:
         for studio in userStudio:
             df_user_aux=df_user_aux.filter(df_user_aux.Studios==studio)
-
+            #df_user_aux.show()
+             
         studio_count=df_user_aux.count()
 
     #ratings
     if userRating:
         for rating in userRating:
             df_user_aux=df_user_aux.filter(df_user_aux.Rating==rating)
+            #df_user_aux.show()
+            
         rating_count=df_user_aux.count()
-        
+   
     final_count=df_user_aux.count() 
-    
+ 
+    #df_user_aux.show()
+   
     # name_array.append(user)
     # cont_array.append(final_count)
     # 8 7 6 5 4 
+    #
     for i in range(len(name_array)):
         if final_count>cont_array[i] and end==1:
             
@@ -158,10 +166,12 @@ for index in range(100):
             name_array[i]=user
             end=0
 
-
+df_user_aux.show()
 for x in range(len(name_array)):
      print("Contador de "+name_array[x]+":  "+str(cont_array[x]))
-    
+     
+print("asduihygtaush" + str(userRating)+"asnduiuasnd"+str(userStudio)+"asndubhasidjs"+str(userSour)+"asdnasind"+str(userGen))
+print("rango=:"+str(rango))
 # print("Genero:"+ genero1 +","+ genero2 + " Count: " + str(genre_count))
 # print("Source:"+ source + " Count: " + str(source_count))
 # print("Studio:"+ studio + " Count: " + str(studio_count))# contador final de cuantos animes filtrados con todos los parametros hay
@@ -188,4 +198,3 @@ for x in range(len(name_array)):
 #df_genre_filtered.show(truncate=False)      
 
 #df.filter(array_contains(split(df.Genres,","),"Action")==True)#.show() 
-    

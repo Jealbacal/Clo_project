@@ -3,7 +3,8 @@ import os
 from pyspark import SparkContext,SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.types import FloatType, StringType, StructField, StructType, IntegerType
-
+#  echo 'PATH="$PATH:/usr/local/spark/bin"' >> ~/.profile
+# source ~/.profile
 
 conf=SparkConf().setAppName('ProjectAnimeFilter')
 sc= SparkContext(conf=conf)
@@ -57,7 +58,7 @@ schema = StructType(
 # df1.write.csv("output5.csv")
 # lista=df1.rdd.map(lambda x:(x[0],x[1])).collect()
 # print(lista)
-df=spark.read.csv('animeList.csv',sep=',',mode="DROPMALFORMED",schema=schema)
+df=spark.read.csv('AnimeList.csv',sep=',',mode="DROPMALFORMED",schema=schema)
 lista=df.select('Genres').rdd.flatMap(lambda x:x).collect()
 lista2=df.select('Studios').rdd.flatMap(lambda x:x).collect()
 lista3=df.select('Source').rdd.flatMap(lambda x:x).collect()
@@ -165,7 +166,7 @@ with open("Studios0.txt", 'r') as r, open('Studios1.txt', 'w') as o:
     for line in r:
         #strip() function
         if line.strip():
-            o.write(line)
+            o.write(line.lower())
 
 with open("Source0.txt", 'r') as r, open('Source1.txt', 'w') as o:
     for line in r:
