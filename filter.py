@@ -37,15 +37,49 @@ df_names.show()
 #Popular:  si
 
 
-genero1="Action"
-genero2="Adventure"
-genero3=""
-genero4=""
-#puedo hacer un array pero ya otro dia
-source="Manga"
-studio="Bones"
-rating=""
+# genero1="Action"
+# genero2="Adventure"
+# genero3=""
+# genero4=""
+# #puedo hacer un array pero ya otro dia
+# source="Manga"
+# studio="Bones"
+# rating=""
+#------------------------------------------------------------------
+#Recojida de datos seleccionados por el usuario
+userGen=[]
+try: 
+    with open("userGeneros.txt") as fileGen:
+        for line in fileGen:
+            userGen.append(line)
+except:
+    print("el usuario no tiene preferencia por el genero")
 
+userSour=[]
+try: 
+    with open("userSource.txt") as fileSource:
+        for line in fileSource:
+            userSour.append(line)
+except:
+    print("el usuario no tiene preferencia por el source")
+
+userRating=[]
+try: 
+    with open("userRating.txt") as fileRating:
+        for line in fileRating:
+            userRating.append(line)
+except:
+    print("el usuario no tiene preferencia por la calificacion de edad")
+
+userStudio=[]
+try: 
+    with open("userStudio.txt") as fileStudio:
+        for line in fileStudio:
+            userStudio.append(line)
+except:
+    print("el usuario no tiene preferencia por el estudio")
+
+#---------------------------------------------------------------
 once=1
 
 filter_size=2
@@ -72,28 +106,38 @@ for index in range(100):
 
     end=1
     #generos
-    if genero1!="":
-        df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero1)==True)
 
-    if genero2!="":
-        df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero2)==True)
+    if userGen:
+        for genre in userGen:
+             df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genre)==True)
 
-    #if(genero3 y 4)
+    # if genero1!="":
+    #     df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero1)==True)
+
+    # if genero2!="":
+    #     df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genero2)==True)
+
+    # #if(genero3 y 4)
     genre_count=df_user_aux.count()
 
     #source
-    if source!="":
-        df_user_aux=df_user_aux.filter(df_user_aux.Source==source)
-        source_count=df_user_aux.count()
+    if userSour:
+        for source in userSour:
+            df_user_aux=df_user_aux.filter(df_user_aux.Source==source)
+
+    source_count=df_user_aux.count()
 
     #studio
-    if studio!="":
-        df_user_aux=df_user_aux.filter(df_user_aux.Studios==studio)
+    if userStudio:
+        for studio in userStudio:
+            df_user_aux=df_user_aux.filter(df_user_aux.Studios==studio)
+
         studio_count=df_user_aux.count()
 
     #ratings
-    if rating!="":
-        df_user_aux=df_user_aux.filter(df_user_aux.Rating==rating)
+    if userRating:
+        for rating in userRating:
+            df_user_aux=df_user_aux.filter(df_user_aux.Rating==rating)
         rating_count=df_user_aux.count()
         
     final_count=df_user_aux.count() 
