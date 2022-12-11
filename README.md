@@ -52,11 +52,7 @@ Primero descargamos y extraemos la distribución de Apache Spark a /usr/local/sp
 
   ```bash 
   curl -O https://archive.apache.org/dist/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.tgz
-  ```
-  ```bash
   tar xvf spark-3.3.1-bin-hadoop3.tgz
-  ```
-  ```bash
   sudo mv spark-3.3.1-bin-hadoop3 /usr/local/spark
  ```
  
