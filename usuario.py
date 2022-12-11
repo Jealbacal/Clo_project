@@ -1,5 +1,4 @@
 import inquirer
-import csv
 import pandas as pd
 
 
@@ -19,9 +18,9 @@ df.to_csv('animes.csv',index=False)
 listaGeneros=[]
 questions = [
   inquirer.Checkbox(name= 'genres',
-                message="¿Qué generos te gustan? (Seleccione None si le da igual)",
+                message="¿Qué generos te gustan?",
                 choices=['Action','Adventure','Avant Garde','Award Winning','Boys Love', 'Comedy','Drama', 
-    'Fantasy','Girls Love','Gourmet','Horror', 'Mistery', 'Romance', 'Sci-Fi', 'Slice of Life', 'Sports', 'Supernatural','Suspense','Shounen','Seinen','Josei','Shoujo','None'],
+    'Fantasy','Girls Love','Gourmet','Horror', 'Mistery', 'Romance', 'Sci-Fi', 'Slice of Life', 'Sports', 'Supernatural','Suspense','Shounen','Seinen','Josei','Shoujo'],
             ),
 ]
 answers = inquirer.prompt(questions)
@@ -35,8 +34,8 @@ for i in answers["genres"]:
 listaSource=[]
 questions2 = [
   inquirer.Checkbox(name= 'sources',
-                message="¿De donde prefieres que venga el anime? (Seleccione None si le da igual)",
-                choices=['Web manga','Novel','Light novel','Book','Music','Card game','Original','Game','4-koma manga','Digital manga','Picture book','Manga','Radio','Other','Visual novel','None'],
+                message="¿De donde prefieres que venga el anime?",
+                choices=['Web manga','Novel','Light novel','Book','Music','Card game','Original','Game','4-koma manga','Digital manga','Picture book','Manga','Radio','Other','Visual novel'],
             ),
 ]
 answers2 = inquirer.prompt(questions2)
@@ -50,8 +49,8 @@ for i in answers2["sources"]:
 listaRating=[]
 questions3 = [
   inquirer.Checkbox(name= 'rating',
-                message="¿Alguna preferencia de edad? (Seleccione None si no tiene ninguna)",
-                choices=['G - All Ages','PG-13 - Teens 13 or older','Rx - Hentai','PG - Children','R - 17+ (violence & profanity)','R+ - Mild Nudity','None'],
+                message="¿Alguna preferencia de edad?",
+                choices=['G - All Ages','PG-13 - Teens 13 or older','PG - Children','R - 17+ (violence & profanity)','R+ - Mild Nudity'],
             ),
 ]
 answers3 = inquirer.prompt(questions3)
@@ -85,42 +84,27 @@ ans = ans.lower()
 listaStudio.append(ans)
 
 
-
-if 'None' in listaGeneros:
-    listaGeneros=[]
-if 'None' in listaSource:
-    listaSource=[]
-if 'None' in listaRating:
-    listaRating=[] 
 if 'no' in listaStudio:
     listaStudio=[]
 
 
 print("Estas son tus elecciones:\n")
 
-if len(listaGeneros)==0:
-    print("No importa el genero")
-else:
-    print("Generos: ",listaGeneros)
-    with open(r'userGeneros.txt', 'w') as fp:
-        for item in listaGeneros:
-            fp.write("%s\n" % item)
 
-if len(listaSource)==0:
-    print("No importa la source")
-else:
-    print("Sources: ",listaSource)
-    with open(r'userSource.txt', 'w') as fp:
-        for item in listaSource:
-            fp.write("%s\n" % item)
+print("Generos: ",listaGeneros)
+with open(r'userGeneros.txt', 'w') as fp:
+    for item in listaGeneros:
+        fp.write("%s\n" % item)
 
-if len(listaRating)==0:
-    print("No importa el rating de edad")
-else:
-    print("Rating: ",listaRating)
-    with open(r'userRating.txt', 'w') as fp:
-        for item in listaRating:
-            fp.write("%s\n" % item)
+print("Sources: ",listaSource)
+with open(r'userSource.txt', 'w') as fp:
+    for item in listaSource:
+        fp.write("%s\n" % item)
+
+print("Rating: ",listaRating)
+with open(r'userRating.txt', 'w') as fp:
+    for item in listaRating:
+        fp.write("%s\n" % item)
 
 if len(listaStudio)==0:
     print("No importa el estudio")

@@ -1,15 +1,10 @@
 #!/usr/bin/python3
-import pyspark
-import re
 import os
-from email.header import Header
 from pyspark import *
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql import *
 from pyspark.sql.functions import *
-from pyspark.sql.types import FloatType, StringType, StructField, StructType, IntegerType
-from pyspark.sql.functions import array_contains,split,array
 
 
 conf=SparkConf().setAppName('ProjectAnimeFilter')
@@ -63,8 +58,8 @@ try:
 except:
     print("el usuario no tiene preferencia por el estudio")
 
-# #Recomendacion de Studio
-#########################################################################
+#Recomendacion de Studio
+########################################################################
 if userStudio:
     list_Studio=dfclean.select('username','anime_id','Genres').filter((col('Studios') == userStudio[0]) )\
         .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
@@ -119,8 +114,8 @@ if userSour:
             # write each item on a new line
             fp.write("%s\n" % item)
 
-# #Recomendacion por Rating
-# #########################################################################
+# # #Recomendacion por Rating
+# # #########################################################################
 if userRating:
 
     list_Rating=dfclean.select('username','anime_id','Genres').filter((col('Rating').isin(userRating)))\
@@ -147,8 +142,8 @@ if userRating:
             # write each item on a new line
             fp.write("%s\n" % item)
 
-#Recomendacion por genre
-#########################################################################
+# #Recomendacion por genre
+# #########################################################################
 if userGen:
 
     list_Gen=dfclean.select('username','anime_id','Genres').filter(col('Genres').isin(userGen))\
@@ -166,19 +161,18 @@ if userGen:
     dfcount=spark.read.csv('genreUser.csv',sep=',',mode="DROPMALFORMED",header=True)
     listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
     result=[t[0] for t in list_Gen if t[1]==int(listMax[0])]
-
     genreRecomendation=dfclean.select('Name','my_score').filter((col('username')==result[0]) & (col('Genres').isin(userGen))).orderBy(col('my_score').desc())\
         .limit(5).rdd.map(lambda row:(row[0])).collect()
         
     with open(r'GenreRecomendation.txt', 'w') as fp:
         for item in genreRecomendation:
             # write each item on a new line
-            fp.write("%s %s\n" % item)
-
+            fp.write("%s\n" % item)
 
 #Recomendacion de animes con todos los filtros aplicados ( escogidos por el usuario)
 ######################################
-if userRating and userGen and userSour and userStudio:
+userRecomendation=[]
+if userStudio:
     list_All=dfclean.select('username','anime_id','Genres').filter((col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('Genres').isin(userGen)) & (col('Rating').isin(userRating)))\
             .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
 
@@ -194,37 +188,68 @@ if userRating and userGen and userSour and userStudio:
     dfcount=spark.read.csv('UserRecomendation.csv',sep=',',mode="DROPMALFORMED",header=True)
     listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
     result=[t[0] for t in list_All if t[1]==int(listMax[0])]
+    if result:
+        userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('Genres').isin(userGen)) & (col('Rating').isin(userRating)) )\
+            .orderBy(col('my_score').desc()).limit(5).rdd.map(lambda row:row[1]).collect()
 
+    with open(r'UserRecomendation.txt', 'w') as fp:
+        for item in userRecomendation:
+            # write each item on a new line
+            fp.write("%s\n" % item)
+else:
 
-    userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('Genres').isin(userGen)) & (col('Rating').isin(userRating)) )\
-        .orderBy(col('my_score').desc()).limit(5).rdd.map(lambda row:row[1]).collect()
+    list_All=dfclean.select('username','anime_id','Genres').filter((col('Source').isin(userSour))  & (col('Genres').isin(userGen)) & (col('Rating').isin(userRating)))\
+            .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
+
+    with open(r'UserRecomendation.csv', 'w') as fp:
+            fp.write('username,count')
+            fp.write('\n')
+            for item in list_All:
+                # write each item on a new line
+                for x in item:
+                    fp.write(str(x)+',')
+                fp.write('\n')
+
+    dfcount=spark.read.csv('UserRecomendation.csv',sep=',',mode="DROPMALFORMED",header=True)
+    listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
+    result=[t[0] for t in list_All if t[1]==int(listMax[0])]
+    if result:
+        userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour))  & (col('Genres').isin(userGen)) & (col('Rating').isin(userRating)) )\
+            .orderBy(col('my_score').desc()).limit(5).rdd.map(lambda row:row[1]).collect()
 
     with open(r'UserRecomendation.txt', 'w') as fp:
         for item in userRecomendation:
             # write each item on a new line
             fp.write("%s\n" % item)
 
-# # if userSour and userStudio:
-# #     list_All=dfclean.select('username','anime_id','Genres').filter((col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) )\
-# #         .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
+print("Animes recomendados: \n")
+print("Anime que coinciden con el genero introducido: \n")
+print(genreRecomendation)
+print('\n')
+print("Anime que coinciden segun tu Source: \n")
+print(sourceRecomendation)
+print('\n')
+print("Anime que coinciden segun tu Rating: \n")
+print(ratingRecomendation)
+print('\n')
+if userStudio:
+    print("Anime que coinciden con el estudio introducido: \n")
+    print(studioRecomendation)
+    print('\n')
+if userRecomendation:
+    print("Anime que coinciden con todos los datos introducidos: \n")
+    print(userRecomendation)
+    print('\n')
+else:
+    print("Disculpe pero no encontramos animes que cumplan esas caracteristicas")
 
-# #     with open(r'UserRecomendation.csv', 'w') as fp:
-# #         fp.write('username,count')
-# #         fp.write('\n')
-# #         for item in list_All:
-# #             # write each item on a new line
-# #             for x in item:
-# #                 fp.write(str(x)+',')
-# #             fp.write('\n')
+os.remove("genreUser.csv")
+os.remove("ratingUser.csv")
+os.remove("sourceUser.csv")
+os.remove("studioUser.csv")
+os.remove("UserRecomendation.csv")
+os.remove("userSource.txt")
+os.remove("userGeneros.txt")
+os.remove("userStudios.txt")
+os.remove("userRating.txt")
 
-# #     dfcount=spark.read.csv('UserRecomendation.csv',sep=',',mode="DROPMALFORMED",header=True)
-# #     listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
-# #     result=[t[0] for t in list_All if t[1]==int(listMax[0])]
-
-
-# #     userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('my_score')>=5)).limit(5).rdd.map(lambda row:row[1]).collect()
-
-# #     with open(r'UserRecomendation.txt', 'w') as fp:
-# #         for item in userRecomendation:
-# #             # write each item on a new line
-# #             fp.write("%s\n" % item)
