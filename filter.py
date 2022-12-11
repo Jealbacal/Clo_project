@@ -221,6 +221,9 @@ else:
         for item in userRecomendation:
             # write each item on a new line
             fp.write("%s\n" % item)
+            
+#Visualizacion de resultados
+############################################################
 
 print("Animes recomendados: \n")
 print("Anime que coinciden con el genero introducido: \n")
@@ -241,7 +244,7 @@ if userRecomendation:
     print(userRecomendation)
     print('\n')
 else:
-    print("Disculpe pero no encontramos animes que cumplan esas caracteristicas")
+    print("Disculpe pero no encontramos animes que cumplan esas caracteristicas\n")
 
 os.remove("genreUser.csv")
 os.remove("ratingUser.csv")
@@ -250,6 +253,6 @@ os.remove("studioUser.csv")
 os.remove("UserRecomendation.csv")
 os.remove("userSource.txt")
 os.remove("userGeneros.txt")
-os.remove("userStudios.txt")
+os.remove("userStudio.txt")
 os.remove("userRating.txt")
 
