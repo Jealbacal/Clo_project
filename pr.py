@@ -53,32 +53,12 @@ schema = StructType(
 
     ]
 )
-# df=spark.read.csv('AnimeList.csv',sep=',',mode="DROPMALFORMED",schema=schema)
-# df1=df.groupBy("recclass").avg("mass (g)")
-# df1.write.csv("output5.csv")
-# lista=df1.rdd.map(lambda x:(x[0],x[1])).collect()
-# print(lista)
+
 df=spark.read.csv('AnimeList.csv',sep=',',mode="DROPMALFORMED",schema=schema)
 lista=df.select('Genres').rdd.flatMap(lambda x:x).collect()
 lista2=df.select('Studios').rdd.flatMap(lambda x:x).collect()
 lista3=df.select('Source').rdd.flatMap(lambda x:x).collect()
 lista4=df.select('Rating').rdd.flatMap(lambda x:x).collect()
-
-
-# df3=df.select('Studios')
-# df3.distinct().coalesce(1).write.format("text").option("header", "false").mode("append").save("Studios.txt")
-
-# df4=df.select('Source')
-# df4.distinct().coalesce(1).write.format("text").option("header", "false").mode("append").save("Source.txt")
-
-# df5=df.select('Rating')
-# df5.distinct().coalesce(1).write.format("text").option("header", "false").mode("append").save("Rating.txt")
-
-# df6=df.select('Genres')
-# df6.distinct().coalesce(1).write.format("text").option("header", "false").mode("append").save("Genres.txt")
-
-
-#creo nuevo fichero y le meto cada elemtno de la lista en cada fila 
 
 with open(r'Genres0.txt', 'w') as fp:
     for item in lista:
@@ -210,4 +190,3 @@ os.remove("Genres1.txt")
 os.remove("Studios1.txt")
 os.remove("Source1.txt")
 os.remove("Rating1.txt")
-

@@ -65,19 +65,21 @@ spark-submit <nombre_fichero.py>
 
 Primero vamos a hablar un poco de los archivos .csv que utilizamos:
 * AnimeList.csv: contiene todos los animes con todos los atributos que tiene cada uno y a partir de los cuales vamos a realizar el filtrado.
-* userList.csv: contiene una gran número de usaurios incluyendo los animes que se han visto y la nota que le han puesto.
+* userAnimeList.csv: contiene una gran número de usaurios incluyendo los animes que se han visto y la nota que le han puesto.
+* userList.csv: contiene una lista de todos los usuarios, incluyendo sus datos personales y un pequeño conteo de los animes que ha visto, que planea ver o que ha dejado de ver
 
 A continuación vamos a comentar un poco de que se encarga cada script:
 
 * pr.py : este es el script que ejecutaremos en primero lugar. Se encarga de leer el AnimeList.csv que contiene todos los datos de todos los animes para poder luego darle opciones de elección a los usuarios.
-    - Para ver que es lo que puede elegir el usaurio creamos ficheros .txt para cada una de las opciones que le damos, es decir, creamos un    Studios.txt para los studios, un Source.txt para la source, un Genres.txt para los géneros y un Rating.txt para el rating. De esta forma en el usaurio.py podemos pedirle sus opciones.
+    - Para ver que es lo que puede elegir el usuario creamos ficheros .txt para cada una de las opciones que le damos, es decir, creamos por ejemplo un   Studios.txt para los estudios, un Source.txt para la source, un Genres.txt para los géneros y un Rating.txt para el rating. De esta forma en el usaurio.py podemos pedirle sus opciones.
     
 * usuario.py : este script se encarga de pedir, mostrar y guardar las elecciones que ha decidido tomar el usuario a la hora de pedir que le recomendemos un anime. Puede decidir que género, source y rating quiere además de poder también elegir o no si quiere un studio en particular.
     - Para realizar las elecciones se usa flechita hacia abajo para moverse, hacia la derecha para seleccionar, hacia la izquierda para quitar la selección y al enter para guardar tu elección.
     - Los datos que ha seleccionado se guardan en ficheros .txt para que pueden ser leidos por el filter.py. Se crearan tantos ficheros como elecciones haya realizado el usaurio.
+    -Aparte este script limpia las columnas que necesetimos de los csv Animelist( creando asi animes.csv) y userAnimeList( creando asi el clean.csv)
 
-* filter.py: este script es el que se encarga de realizar el filtrado de los datos en función de las elecciones del usuario. Este script trabaja con el userList.csv, recorriendo todos los usuarios y contando la cantidad de animes que se han visto que coinciden con las elecciones del usaurio. Una vez tenemos ese conteo hecho, nos quedamos con el que más tiene y dentro de él escogemos los 5 que más nota tengan puesta por ese usuario para mostrarselo al usuario que pidió la recomendación (Para poder mostrar le anime y verlo hacemos un join con el otro csv que utilizamos).
-  - Para mostrarle los resultados le mostramos los resultados de cada campo en su txt correspondiente llamado generRecomendation.txt para generos tal tal tal y finalmente un userRecomendation.txt con aquellos animes que incluyen todos los campos que ha introducido (puede ser que no haya ningún anime que contenga todos los campos introducidos por el usaurio, por eso también mostramos un .txt por cada eleccion hecha por el usaurio, es decir un txt de animes recomendados según el género, un txt según la source, etc.).
+* filter.py: este script es el que se encarga de realizar el filtrado de los datos en función de las elecciones del usuario. Este script trabaja con el userList.csv, recorriendo todos los usuarios y contando la cantidad de animes que se han visto que coinciden con las elecciones del usuario. Una vez tenemos ese conteo hecho, nos quedamos con el que más tiene y dentro de su lista de animes escogemos los 5 que más nota tiene para mostrarselo al usuario que pidió la recomendación (Para poder mostrar el anime y verlo hacemos un join con animes.csv y clean.csv a través de la columna MAL_id).
+  - Para mostrarle los resultados le mostramos los resultados de cada campo en su txt correspondiente llamado GenreRecomendation.txt para generos, SourceRecomendation para Source,StudioRecomendation  para los Estudiostal, RatingRecomendation para el Rating  y finalmente un UserRecomendation.txt con aquellos animes que incluyen todos los campos que ha introducido (puede ser que no haya ningún anime que contenga todos los campos introducidos por el usuario, por eso también mostramos un .txt por cada eleccion hecha por el usaurio, es decir un txt de animes recomendados según el género, un txt según la source, etc.).
   
 ## Ejecutarlo en Google Cloud
 
@@ -88,3 +90,4 @@ A continuación vamos a comentar un poco de que se encarga cada script:
 # Clo_project
 # Enlace a la dataset de los usuarios en kaggle, en especifico el UserAnimeList.csv
 # https://www.kaggle.com/datasets/azathoth42/myanimelist
+# https://github.com/Hernan4444/MyAnimeList-Database/blob/master/data/anime.csv
