@@ -7,7 +7,7 @@ import pandas as pd
 
 df = pd.read_csv('animeList.csv')
 #Elimino columnas useless
-df.drop(['Score','English name','Japanese name','Type','Episodes','Aired','Premiered','Producers','Licensors','Duration','Rating','Popularity','Members','Favorites',
+df.drop(['Score','English name','Japanese name','Type','Episodes','Aired','Premiered','Producers','Licensors','Duration','Popularity','Members','Favorites',
          'Watching','Completed','On-Hold','Dropped','Plan to Watch','Score-10','Score-9','Score-8','Score-7','Score-6','Score-5','Score-4','Score-3','Score-2','Score-1'],
 axis=1,inplace=True)
 # df['Genres'] = df['Genres'].str.lower()
