@@ -12,8 +12,6 @@ from pyspark.sql.types import FloatType, StringType, StructField, StructType, In
 from pyspark.sql.functions import array_contains,split,array
 
 
-#import spark.sqlContext.implicits._
-
 conf=SparkConf().setAppName('ProjectAnimeFilter')
 sc= SparkContext(conf=conf)
 spark=SparkSession.builder.appName('PySpark Read CSV').getOrCreate()
@@ -25,25 +23,7 @@ df2=spark.read.csv('UserList.csv',sep=',',mode="DROPMALFORMED",header=True)
 dfJoin=df.join(df1,df.anime_id==df1.MAL_ID,"inner")
 
 dfclean=dfJoin.drop("MAL_ID")
-#dfclean.show()
 df_names=df2.select("username")
-#Row(username='RedvelvetDaisuki')
-
-#Genres:  ['Action']
-#Sources:  ['Manga']
-#Rating:  ['PG-13 - Teens 13 or older']
-#Estudio:  mappa
-#Popular:  si
-
-
-# genero1="Action"
-# genero2="Adventure"
-# genero3=""
-# genero4=""
-# #puedo hacer un array pero ya otro dia
-# source="Manga"
-# studio="Bones"
-# rating=""
 #------------------------------------------------------------------
 #Recojida de datos seleccionados por el usuario
 userGen=[]
@@ -83,137 +63,144 @@ try:
 except:
     print("el usuario no tiene preferencia por el estudio")
 
-#---------------------------------------------------------------
-once=1
+def cmpTupla(tupla):
+    return(tupla[1])
 
-filter_size=3
 
-name_array=[""]*filter_size
-cont_array=[0]*filter_size
-
-index=0
-rango=df_names.count()
-#-----------------------------------------------------
-#cojo la tabla con el usuario con nombre [index]
-# for index in range(5):
-#     name=(df_names.collect()[index])
-#     print(name)
-#     user=name.__getitem__('username')
-#     print(user)
-#     df_user_aux=dfclean.filter(dfclean.username==user)
-
-#     genre_count=0
-#     studio_count=0
-#     source_count=0
-#     rating_count=0
-#     final_count=0
-
-#     end=1
-#     #generos
-
-#     if userGen:
-#         for genre in userGen:
-#              df_user_aux=df_user_aux.filter(array_contains(split(df_user_aux.Genres,", "),genre)==True)
-
-#     genre_count=df_user_aux.count()
-
-#     #source
-#     if userSour:
-#         for source in userSour:
-#             df_user_aux=df_user_aux.filter(df_user_aux.Source==source)
-#             #df_user_aux.show()
-             
-#     source_count=df_user_aux.count()
-
-#     #studio
-#     if userStudio:
-#         for studio in userStudio:
-#             df_user_aux=df_user_aux.filter(df_user_aux.Studios==studio)
-#             #df_user_aux.show()
-             
-#         studio_count=df_user_aux.count()
-
-#     #ratings
-#     if userRating:
-#         for rating in userRating:
-#             df_user_aux=df_user_aux.filter(df_user_aux.Rating==rating)
-#             #df_user_aux.show()
-            
-#         rating_count=df_user_aux.count()
-   
-#     final_count=df_user_aux.count() 
- 
-   
-#     for i in range(len(name_array)):
-#         if final_count>=cont_array[i] and end==1:
-            
-           
-#             j=(len(name_array)-1)
-#             while j > 0:
-#                 cont_array[j]=cont_array[j-1]
-#                 name_array[j]=name_array[j-1]
-#                 j-=1
-#             cont_array[i]=final_count
-#             name_array[i]=user
-#             end=0
-
-#df_user_aux.show()
-
+#Recomendacion de animes con todos los filtros aplicados ( escogidos por el usuario)
 ######################################
-list_genero=dfclean.select('username','anime_id','Genres').filter(col('Source') == userSour[0])\
+list_All=dfclean.select('username','anime_id','Genres').filter((col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) )\
     .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
 
-with open(r'sourceUserV34.csv', 'w') as fp:
+with open(r'UserRecomendation.csv', 'w') as fp:
     fp.write('username,count')
     fp.write('\n')
-    for item in list_genero:
+    for item in list_All:
         # write each item on a new line
         for x in item:
             fp.write(str(x)+',')
         fp.write('\n')
 
-dfcount=spark.read.csv('sourceUserV34.csv',sep=',',mode="DROPMALFORMED",header=True)
+dfcount=spark.read.csv('UserRecomendation.csv',sep=',',mode="DROPMALFORMED",header=True)
 listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
-result=[t[0] for t in list_genero if t[1]==int(listMax[0])]
+result=[t[0] for t in list_All if t[1]==int(listMax[0])]
 
-######################################
 
-sourceRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source')==userSour[0])&(col('my_score')>=9)).limit(5).rdd.map(lambda row:row[1]).collect()
+userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('my_score')>=5)).limit(5).rdd.map(lambda row:row[1]).collect()
 
-with open(r'SourceRecomendation.txt', 'w') as fp:
-    for item in sourceRecomendation:
+with open(r'UserRecomendation.txt', 'w') as fp:
+    for item in userRecomendation:
         # write each item on a new line
         fp.write("%s\n" % item)
 
+# #Recomendacion de Studio
+#########################################################################
+if userStudio:
+    list_Studio=dfclean.select('username','anime_id','Genres').filter((col('Studios') == userStudio[0]) )\
+        .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
 
-# # for x in range(len(name_array)):
-# #      print("Contador de "+name_array[x]+":  "+str(cont_array[x]))
-     
-# # print("asduihygtaush" + str(userRating)+"asnduiuasnd"+str(userStudio)+"asndubhasidjs"+str(userSour)+"asdnasind"+str(userGen))
-# # print("rango=:"+str(rango))
-# print("Genero:"+ genero1 +","+ genero2 + " Count: " + str(genre_count))
-# print("Source:"+ source + " Count: " + str(source_count))
-# print("Studio:"+ studio + " Count: " + str(studio_count))# contador final de cuantos animes filtrados con todos los parametros hay
+    with open(r'studioUser.csv', 'w') as fp:
+        fp.write('username,count')
+        fp.write('\n')
+        for item in list_Studio:
+            # write each item on a new line
+            for x in item:
+                fp.write(str(x)+',')
+            fp.write('\n')
 
-
-
-#--------------------------------------------------
-
-
-
-#print("Genero:"+ genero + " Count: " + genre_count)
-#print("Studio:"+ studio + " Count: " + studio_count)
-#dfclean.write.csv("carpeta_datos",header=True)
-#df.filter(array_contains(split(df.Genres,","),"Action")==True)#.show()      
-#df.select("MAL_ID","Name","Genres","Score","Studios","Type").show()
+    dfcount=spark.read.csv('studioUser.csv',sep=',',mode="DROPMALFORMED",header=True)
+    listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
+    result=[t[0] for t in list_Studio if t[1]==int(listMax[0])]
 
 
-#-------------------------------------
-#df_genre=df_user_aux.filter(array_contains(df_user_aux.Genres,genero)==True).show()
-#df_genre=df_user_aux.select("anime_id","Name",(split(df_user_aux.Genres,", ").alias("Genre_Array")))
-#df_genre.show(truncate=False)
-#df_genre_filtered=df_genre.filter(array_contains(df_genre.Genre_Array,genero)==True)
-#df_genre_filtered=df_genre.filter(array_contains(df_genre.Genre_Array,"Mecha")==True)
-#df_genre_filtered.show(truncate=False)      
+    studioRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Studios')==userStudio[0])).orderBy(col('my_score').desc())\
+        .limit(5).rdd.map(lambda row:row[1]).collect()
 
-#df.filter(array_contains(split(df.Genres,","),"Action")==True)#.show() 
+    with open(r'StudioRecomendation.txt', 'w') as fp:
+        for item in studioRecomendation:
+            # write each item on a new line
+            fp.write("%s\n" % item)
+
+# #Recomendacion por Source
+#########################################################################
+if userSour:
+    list_Source=dfclean.select('username','anime_id','Genres').filter((col('Source') == userSour[0]) )\
+        .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
+
+    with open(r'sourceUser.csv', 'w') as fp:
+        fp.write('username,count')
+        fp.write('\n')
+        for item in list_Source:
+            # write each item on a new line
+            for x in item:
+                fp.write(str(x)+',')
+            fp.write('\n')
+
+    dfcount=spark.read.csv('sourceUser.csv',sep=',',mode="DROPMALFORMED",header=True)
+    listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
+    result=[t[0] for t in list_Source if t[1]==int(listMax[0])]
+
+
+    sourceRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour))).orderBy(col('my_score').desc())\
+        .limit(5).rdd.map(lambda row:row[1]).collect()
+
+    with open(r'SourceRecomendation.txt', 'w') as fp:
+        for item in sourceRecomendation:
+            # write each item on a new line
+            fp.write("%s\n" % item)
+
+# #Recomendacion por Rating
+# #########################################################################
+if userRating:
+
+    list_Rating=dfclean.select('username','anime_id','Genres').filter((col('Rating').isin(userRating)))\
+        .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
+
+    with open(r'ratingUser.csv', 'w') as fp:
+        fp.write('username,count')
+        fp.write('\n')
+        for item in list_Rating:
+            # write each item on a new line
+            for x in item:
+                fp.write(str(x)+',')
+            fp.write('\n')
+
+    dfcount=spark.read.csv('ratingUser.csv',sep=',',mode="DROPMALFORMED",header=True)
+    listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
+    result=[t[0] for t in list_Rating if t[1]==int(listMax[0])]
+
+    ratingRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('rating').isin(userRating))).orderBy(col('my_score').desc())\
+        .limit(5).rdd.map(lambda row:row[1]).collect()
+
+    with open(r'RatingRecomendation.txt', 'w') as fp:
+        for item in ratingRecomendation:
+            # write each item on a new line
+            fp.write("%s\n" % item)
+
+#Recomendacion por genre
+#########################################################################
+if userGen:
+
+    list_Gen=dfclean.select('username','anime_id','Genres').filter(col('Genres').isin(userGen))\
+        .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
+
+    with open(r'genreUser.csv', 'w') as fp:
+        fp.write('username,count')
+        fp.write('\n')
+        for item in list_Gen:
+            # write each item on a new line
+            for x in item:
+                fp.write(str(x)+',')
+            fp.write('\n')
+
+    dfcount=spark.read.csv('genreUser.csv',sep=',',mode="DROPMALFORMED",header=True)
+    listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
+    result=[t[0] for t in list_Gen if t[1]==int(listMax[0])]
+
+    genreRecomendation=dfclean.select('Name','my_score').filter((col('username')==result[0]) & (col('Genres').isin(userGen))).orderBy(col('my_score').desc())\
+        .limit(5).rdd.map(lambda row:(row[0])).collect()
+        
+    with open(r'GenreRecomendation.txt', 'w') as fp:
+        for item in genreRecomendation:
+            # write each item on a new line
+            fp.write("%s %s\n" % item)
