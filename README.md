@@ -42,7 +42,9 @@ java -version
 Una vez hemos instalado y comprobado la versión de java, procedemos a intalar spark.
 Primero descargamos y extraemos la distribución de Apache Spark a /usr/local/spark:
 
+  ```bash 
   curl -O https://archive.apache.org/dist/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.tgz
+  ```
   tar xvf spark-3.3.1-bin-hadoop3.tgz
   sudo mv spark-3.3.1-bin-hadoop3 /usr/local/spark
  
