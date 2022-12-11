@@ -63,36 +63,6 @@ try:
 except:
     print("el usuario no tiene preferencia por el estudio")
 
-def cmpTupla(tupla):
-    return(tupla[1])
-
-
-#Recomendacion de animes con todos los filtros aplicados ( escogidos por el usuario)
-######################################
-list_All=dfclean.select('username','anime_id','Genres').filter((col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) )\
-    .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
-
-with open(r'UserRecomendation.csv', 'w') as fp:
-    fp.write('username,count')
-    fp.write('\n')
-    for item in list_All:
-        # write each item on a new line
-        for x in item:
-            fp.write(str(x)+',')
-        fp.write('\n')
-
-dfcount=spark.read.csv('UserRecomendation.csv',sep=',',mode="DROPMALFORMED",header=True)
-listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
-result=[t[0] for t in list_All if t[1]==int(listMax[0])]
-
-
-userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('my_score')>=5)).limit(5).rdd.map(lambda row:row[1]).collect()
-
-with open(r'UserRecomendation.txt', 'w') as fp:
-    for item in userRecomendation:
-        # write each item on a new line
-        fp.write("%s\n" % item)
-
 # #Recomendacion de Studio
 #########################################################################
 if userStudio:
@@ -204,3 +174,57 @@ if userGen:
         for item in genreRecomendation:
             # write each item on a new line
             fp.write("%s %s\n" % item)
+
+
+#Recomendacion de animes con todos los filtros aplicados ( escogidos por el usuario)
+######################################
+if userRating and userGen and userSour and userStudio:
+    list_All=dfclean.select('username','anime_id','Genres').filter((col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('Genres').isin(userGen)) & (col('Rating').isin(userRating)))\
+            .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
+
+    with open(r'UserRecomendation.csv', 'w') as fp:
+            fp.write('username,count')
+            fp.write('\n')
+            for item in list_All:
+                # write each item on a new line
+                for x in item:
+                    fp.write(str(x)+',')
+                fp.write('\n')
+
+    dfcount=spark.read.csv('UserRecomendation.csv',sep=',',mode="DROPMALFORMED",header=True)
+    listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
+    result=[t[0] for t in list_All if t[1]==int(listMax[0])]
+
+
+    userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('Genres').isin(userGen)) & (col('Rating').isin(userRating)) )\
+        .orderBy(col('my_score').desc()).limit(5).rdd.map(lambda row:row[1]).collect()
+
+    with open(r'UserRecomendation.txt', 'w') as fp:
+        for item in userRecomendation:
+            # write each item on a new line
+            fp.write("%s\n" % item)
+
+# # if userSour and userStudio:
+# #     list_All=dfclean.select('username','anime_id','Genres').filter((col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) )\
+# #         .groupBy("username").count().rdd.map(lambda row:(row[0],row[1])).collect()
+
+# #     with open(r'UserRecomendation.csv', 'w') as fp:
+# #         fp.write('username,count')
+# #         fp.write('\n')
+# #         for item in list_All:
+# #             # write each item on a new line
+# #             for x in item:
+# #                 fp.write(str(x)+',')
+# #             fp.write('\n')
+
+# #     dfcount=spark.read.csv('UserRecomendation.csv',sep=',',mode="DROPMALFORMED",header=True)
+# #     listMax=dfcount.select(max("count")).rdd.map(lambda row:row[0]).collect()
+# #     result=[t[0] for t in list_All if t[1]==int(listMax[0])]
+
+
+# #     userRecomendation=dfclean.select("username",'Name').filter((col('username')==result[0]) & (col('Source').isin(userSour)) & (col('Studios')==userStudio[0]) & (col('my_score')>=5)).limit(5).rdd.map(lambda row:row[1]).collect()
+
+# #     with open(r'UserRecomendation.txt', 'w') as fp:
+# #         for item in userRecomendation:
+# #             # write each item on a new line
+# #             fp.write("%s\n" % item)

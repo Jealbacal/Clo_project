@@ -79,28 +79,12 @@ while True:
         print("\n No encontramos ninguna serie que tenga ese estudio, pruebe a poner espacios entre las palabras o mirar bien como se llama el estudio\n") 
 
 
-while True:
-    user_input = input('Prefieres que sea popular (si/no): ')
-
-    if user_input.lower() == 'si':
-        name = True
-        print('Entendido, si te interesa\n')
-        break
-    elif user_input.lower() == 'no':
-        name = True
-        print('Entendido, no te interesa\n')
-        break
-    else:
-        print('Escriba si o no')
-
 
 listaStudio=[]
 ans = ans.lower()
 listaStudio.append(ans)
 
-listaRanked=[]
-user_input = user_input.lower()
-listaRanked.append(user_input)
+
 
 if 'None' in listaGeneros:
     listaGeneros=[]
@@ -110,8 +94,6 @@ if 'None' in listaRating:
     listaRating=[] 
 if 'no' in listaStudio:
     listaStudio=[]
-if 'no' in listaRanked:
-    listaRanked=[] 
 
 
 print("Estas son tus elecciones:\n")
@@ -146,14 +128,6 @@ else:
     print("Estudio: ",listaStudio[0])
     with open(r'userStudio.txt', 'w') as fp:
         for item in listaStudio:
-            fp.write("%s\n" % item)
-
-if len(listaRanked) == 0:
-    print("No quiere uno popular")
-else:
-    print("Popular: ",listaRanked[0])
-    with open(r'userRaked.txt', 'w') as fp:
-        for item in listaRanked:
             fp.write("%s\n" % item)
 
 
