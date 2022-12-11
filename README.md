@@ -79,7 +79,7 @@ A continuación vamos a comentar un poco de que se encarga cada script:
 * filter.py: este script es el que se encarga de realizar el filtrado de los datos en función de las elecciones del usuario. Este script trabaja con el userList.csv, recorriendo todos los usuarios y contando la cantidad de animes que se han visto que coinciden con las elecciones del usaurio. Una vez tenemos ese conteo hecho, nos quedamos con el que más tiene y dentro de él escogemos los 5 que más nota tengan puesta por ese usuario para mostrarselo al usuario que pidió la recomendación (Para poder mostrar le anime y verlo hacemos un join con el otro csv que utilizamos).
   - Para mostrarle los resultados le mostramos los resultados de cada campo en su txt correspondiente llamado generRecomendation.txt para generos tal tal tal y finalmente un userRecomendation.txt con aquellos animes que incluyen todos los campos que ha introducido (puede ser que no haya ningún anime que contenga todos los campos introducidos por el usaurio, por eso también mostramos un .txt por cada eleccion hecha por el usaurio, es decir un txt de animes recomendados según el género, un txt según la source, etc.).
   
-
+## Ejecutarlo en Google Cloud
 
     
 
