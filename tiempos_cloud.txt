@@ -1,34 +1,49 @@
-local[] en VM
+filter.py  minutos
+
+local[] in VM
+
 local[2]  8:58
 local[4]  7:44
 local[8]  7:42
 
-local[] en local
+executor 4 cores 4 VM  4:23
+executor 2 cores 4 VM  4:30
+
+local[] in local
 
 local[2]  6:31
 local[4]  4:46
 local[8]  2:05
 
-
-
-executor 4 cores 4 VM  4:23
-executor 2 cores 4 VM  4:30
-
 executor 4 cores 4 local 3:11
 execitor 2 cores 4 local 3:02
 
+---------------------------------------------------------
+
+pr.py   segundos
+
+local[] in VM
+
+local[1] 14.24
+local[2] 14.44
+local[4] 14.67
+local[8] 14.89
+
+executors 4 core 4  31.66
+executors 2 core 4  20.78
+
+local[] in local
+
+local[1] 13.66
+local[2] 11.47
+local[4] 10.95
+local[8] 12.03
+
+executors 4 core 4 06.83
+executors 2 core 4 05.03
 
 
-local[] en vm es muy lento ya que necesita estar abriendo el bucket constantemente
-por como está hecho el programa
 
-local[] en local con varios threads es la más rapida con diferencia ya que 
-al contrario de lo anterior, no tiene el retardo de acceder al bucket
-
-con executors y cores no hay mucha diferencia entre los dos
-
-cada vez que se quiera hacer un filter se necesita ejecutar el user.py
-(no tengo ni idea de porque, si no no funciona)
 
 
 
