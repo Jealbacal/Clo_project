@@ -95,7 +95,13 @@ A continuación vamos a comentar un poco de que se encarga cada script:
   - Para mostrarle los resultados le mostramos los resultados de cada campo en su txt correspondiente llamado GenreRecomendation.txt para generos, SourceRecomendation para Source,StudioRecomendation  para los Estudiostal, RatingRecomendation para el Rating  y finalmente un UserRecomendation.txt con aquellos animes que incluyen todos los campos que ha introducido (puede ser que no haya ningún anime que contenga todos los campos introducidos por el usuario, por eso también mostramos un .txt por cada eleccion hecha por el usaurio, es decir un txt de animes recomendados según el género, un txt según la source, etc.).
   
 ## Ejecutarlo en Google Cloud
-
+* Deberá descargar todos los archivos en local y ejecutar pr.py y user.py
+* Una vez generado los archivos, deberá crear un BUCKET en cloud llamado "hdswa" y una carpeta llamada "code".
+* Tras la creación del Bucket subirá todos los archivos allí.(Debería de tardar como 10 min)
+* Para crar el cluster meterá el siguiente comando: 
+* ```bash
+* gcloud dataproc clusters create example-cluster --region europe-west6 --enable-component-gateway --master-boot-disk-size 50GB --worker-boot-disk-size 50GB
+* ```
     
 
     
