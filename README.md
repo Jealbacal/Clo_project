@@ -7,8 +7,7 @@ Para hacer la recomendación vamos a buscar entre los miles de usuarios que tene
 
 Para recomendarlo utilizamos los .csv que aparecen en el repo, los cuales estan sacados de kaggle y de un repo ajeno de github.
 
-Enlace a la página web:
-# https://gavilaneees.github.io/
+Enlace a la página web: https://gavilaneees.github.io/
 
 ## Preparación del entorno
 
