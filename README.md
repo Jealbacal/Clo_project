@@ -98,10 +98,17 @@ A continuación vamos a comentar un poco de que se encarga cada script:
 * Deberá descargar todos los archivos en local y ejecutar pr.py y user.py
 * Una vez generado los archivos, deberá crear un BUCKET en cloud llamado "hdswa" y una carpeta llamada "code".
 * Tras la creación del Bucket subirá todos los archivos allí.(Debería de tardar como 10 min)
-* Para crar el cluster meterá el siguiente comando: 
-* ```bash
-* gcloud dataproc clusters create example-cluster --region europe-west6 --enable-component-gateway --master-boot-disk-size 50GB --worker-boot-disk-size 50GB
-* ```
+* Para crar el cluster meterá el siguiente comando en la terminal de cloud:
+ ```bash
+ gcloud dataproc clusters create example-cluster --region europe-west6 --enable-component-gateway --master-boot-disk-size 50GB --worker-boot-disk-size 50GB
+ ```
+ * Ya creado el cluster, irá a Dataproc>Cluster>Cluster_info>Virtual Machines y se meterá en master
+ * Subirá el archivo filter_cloud.py a la maquina virtual y podrá ejecutar el código con uno de los siguientes comandos:
+ ```bash
+ spark-submit --master local[4] filter_cloud.py
+ spark-submit --num-executors 4 --executor-cores 4 filter_cloud.py
+ ```
+ Donde el numero 4 es modificable dependiendo de que rendimiento quiera.
     
 
     
