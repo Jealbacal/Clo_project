@@ -6,6 +6,8 @@ Nuestro proyecto trata sobre un recomendador de anime que proporciona al usuario
 Para hacer la recomendación vamos a buscar entre los miles de usuarios que tenemos, aquellos que más animes hayan visto que coincidan con las caraterísitcas que pide el usuario. Esto es interesante ya que, si le mostramos los 5 animes que más le han gustado al usuario que más animes de ese estilo ha visto , probablemente estos le gusten más al usuario que esta utilizando nuestra aplicación que otros que le podamos recomendar nosotros de manera aleatoria en función de las elecciones realizadas (para ver cuales son los 5 que más le han gustado, cogemos los 5 que tienen un score más alto puesto por ese usuario).
 
 Para recomendarlo utilizamos los .csv que aparecen en el repo, los cuales estan sacados de kaggle y de un repo ajeno de github.
+Enlace a la página web:
+# https://gavilaneees.github.io/
 
 ## Preparación del entorno
 
