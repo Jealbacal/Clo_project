@@ -78,7 +78,7 @@ Para los scripts que hemos utilizado se necesitán instalar los siguientes módu
 * Módulo pyspark
 * Módulo os
 * Módulo pandas
-* Módulo inquierer
+* Módulo inquirer
 
 Para poder instalar los siguientes módulos hay que seguir los siguientes pasos:
 
