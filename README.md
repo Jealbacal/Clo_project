@@ -1,40 +1,36 @@
 # Recomendador de anime 
 
 ## Descripción
-Nuestro proyecto trata sobre un recomendador de anime que proporciona al usuario el anime que más le puede interesar en función de varios criterios que el usuario introduce previamente. Los criterios para realizar la búsqueda son género, source(de donde vienen el anime, es decir de un libro, una novela, etc), rating (Pegi de edad) y el estudio que anima dicho anime.
-Para hacer la recomendación vamos a buscar entre los miles de usuarios que tenemos, aquellos que más animes hayan visto que coincidan con las caraterísitcas que pide el usuario. Esto es interesatne ya que, si le mostramos los 5 animes que más le han gustado al usuario que más animes de ese estilo ha visto , probablmente sean del agrado del usuario que esta utilizando nuestra aplicación(para ver cuales son los 5 que más le han gustado, cogemos los 5 que tienen un score más alto puesto por ese usuario).
+Nuestro proyecto trata sobre un recomendador de anime que proporciona al usuarioanimes que le puede interesar en función de unas elecciones realizadas sobre diversos atributos de los animes. Los criterios para realizar la búsqueda y elección son: género, source(de donde vienen el anime, es decir de un libro, una novela, etc), rating (Pegi de edad) y el estudio que anima dicho anime.
+
+Para hacer la recomendación vamos a buscar entre los miles de usuarios que tenemos, aquellos que más animes hayan visto que coincidan con las caraterísitcas que pide el usuario. Esto es interesante ya que, si le mostramos los 5 animes que más le han gustado al usuario que más animes de ese estilo ha visto , probablemente estos le gusten más al usuario que esta utilizando nuestra aplicación que otros que le podamos recomendar nosotros de manera aleatoria en función de las elecciones realizadas (para ver cuales son los 5 que más le han gustado, cogemos los 5 que tienen un score más alto puesto por ese usuario).
 
 Para recomendarlo utilizamos los .csv que aparecen en el repo, los cuales estan sacados de kaggle.
 
 ## Preparación del entorno
 
-Para poder ejecutar los diversos scripts es necesario tener python instalado, por lo general suele venir pre-instalado en el sistema por lo que para ver la versión más actulizada ejecutamos el siguente comando : $ sudo apt update
+Para poder ejecutar los diversos scripts es necesario tener python instalado, por lo general suele venir pre-instalado en el sistema por lo que para ver la versión más actulizada ejecutamos el siguente comando :  
 
-##  Cómo ejecutar la aplicación
-
-Lo primero que debemos hacer para ejecutar la aplicación es
-
-
-## Módulos necesarios
-
-Para los scripts que hemos utilizado se necesitán instalar los siguientes módulos.
-
-* Módulo pyspark
-* Módulo os
-* Módulo pandas
-* Módulo inquierer
-
-Para poder instalar los siguientes módulos hay que seguir los siguientes pasos:
-
-Primero abrir la terminal de python obteninedo $ python y después usar el comando
-```bash 
-pip install <nombre_del_módulo>
-```
-
-Una vez instalado si usamos el comandov eremos que nos mostrará por terminal que ya lo tenemos.
 ```bash
-import <nombreDelModulo> 
+sudo apt update
 ```
+Si necesitáramos instalarlo, tendríamos que usar el comando : 
+
+```bash
+sudo apt-get install python3.6 
+```
+Finalmente para comprobar la versión que tenemos usamos el comando :
+
+```bash
+python3 –version 
+```
+Cómo para cargar los mmódulos vamos a necesitar pip debemos isntalarlo usando el siguiente comando :
+
+```bash
+sudo apt-get install python3-pip
+```
+A continuación nos quedaría instalar pyspark y los módulos necesarios.
+
 ## Instalación de Pyspark
 
 Para usarlo debemos previamente instalarnos Java, para ello introducimos los siguientes comandos:
@@ -74,6 +70,42 @@ Una vez sabemos que está bien instalado podemos porceder a ejecutar los scripts
 ```bash
 spark-submit <nombre_fichero.py>
 ```
+
+## Módulos necesarios
+
+Para los scripts que hemos utilizado se necesitán instalar los siguientes módulos.
+
+* Módulo pyspark
+* Módulo os
+* Módulo pandas
+* Módulo inquierer
+
+Para poder instalar los siguientes módulos hay que seguir los siguientes pasos:
+
+Primero abrir la terminal de python obteninedo $ python y después usar el comando
+```bash 
+pip install <nombre_del_módulo>
+```
+
+Una vez instalado si usamos el comandov eremos que nos mostrará por terminal que ya lo tenemos.
+```bash
+import <nombreDelModulo> 
+```
+
+##  Cómo ejecutar la aplicación
+
+Lo primero que debemos hacer para ejecutar la aplicación es ejecutar el script de pr.py para obtener los atributos que queremos que el usuario filtre, para ello usamos este comando :
+```bash
+spark-submit pr.py
+```
+Una vez ejecutado ese script , pasamos a ejecutar el usuario.py que le pedirá al usuario que seleccione los atributos que quiere que tenga su anime. Finalmente le mostraremos y guardaremos en ficheros .txt sus elecciones. Es un simple fichero de python por lo que se ejecuta como tal.
+
+Para finalizar ejecutamos el script filter.py que es el que se encarga de, en función de las elecciones del usuario, buscar entre los miles de usuarios, a aquel que más animes que coincidan con dichas elecciones se haya visto, para así finalmente mostrale por pantalla y por ficheros llamados XRecomendation.txt los animes que le recomendamos en función de cada parametro elegeido (le recomendamos los 5 que más le hayan gustado al usuario del que los sacamos).
+Para ejecutar el filter.py usamos :
+```bash
+spark-submit filter.py
+```
+
 ## Explicación de los scripts y de los csv
 
 Primero vamos a hablar un poco de los archivos .csv que utilizamos:
@@ -110,10 +142,7 @@ A continuación vamos a comentar un poco de que se encarga cada script:
  ```
  Donde el numero 4 es modificable dependiendo de que rendimiento quiera.
     
-
-    
-
 # Clo_project
-# Enlace a la dataset de los usuarios en kaggle, en especifico el UserAnimeList.csv
+# Enlace a la dataset de los usuarios en kaggle, en especifico el UserAnimeList.csv y al repositorio de donde sacamos el AnimeList.csv de los animes, en especifico el animes.csv.
 # https://www.kaggle.com/datasets/azathoth42/myanimelist
 # https://github.com/Hernan4444/MyAnimeList-Database/blob/master/data/anime.csv
