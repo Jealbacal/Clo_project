@@ -118,10 +118,12 @@ A continuación vamos a comentar un poco de que se encarga cada script:
 * pr.py : este es el script que ejecutaremos en primero lugar. Se encarga de leer el AnimeList.csv que contiene todos los datos de todos los animes para poder luego darle opciones de elección a los usuarios.
     - Para ver que es lo que puede elegir el usuario, creamos ficheros .txt para cada una de las opciones que le damos, es decir, creamos por ejemplo un Studios.txt para los estudios, un Source.txt para la source, un Genres.txt para los géneros y un Rating.txt para el rating. De esta forma en el usaurio.py podemos pedirle sus opciones.
     
+* limpieza.py : este es el script que se encarga de limpiar los dataframes,en el usamos la libreria de pandas para eliminar las columnas que         consideramos inneserarias.
+
 * usuario.py : este script se encarga de pedir, mostrar y guardar las elecciones que ha decidido tomar el usuario a la hora de pedir que le recomendemos un anime. Puede decidir que género, source y rating quiere, además de poder también elegir o no si quiere un estudio de animación en particular.
     - Para realizar las elecciones se usa flechita hacia abajo para moverse, hacia la derecha para seleccionar, hacia la izquierda para quitar la selección y al enter para guardar tu elección.
     - Los datos que ha seleccionado se guardan en ficheros .txt para que pueden ser leidos por el filter.py. Se crearan tantos ficheros como elecciones haya realizado el usuario.
-    - Este script también limpia las columnas que necesetimos de los csv Animelist( creando asi animes.csv) y userAnimeList( creando asi el clean.csv)
+    
 
 * filter.py: este script es el que se encarga de realizar el filtrado de los datos en función de las elecciones del usuario. Este script trabaja con el userList.csv, recorriendo todos los usuarios y contando la cantidad de animes que se han visto que coinciden con las elecciones del usuario.
 Una vez tenemos ese conteo hecho, nos quedamos con el que más tiene y dentro de su lista de animes escogemos los 5 que más nota tiene para mostrarselo al usuario que pidió la recomendación (Para poder mostrar el anime y verlo hacemos un join con animes.csv y clean.csv a través de la columna MAL_id).
